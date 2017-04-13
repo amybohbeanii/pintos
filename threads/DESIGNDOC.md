@@ -25,9 +25,14 @@ None.
 >> member, global or static variable, ‘typedef’, or enumeration.
 >> Identify the purpose of each in 25 words or less.
 
+##### functions
+* Reimplement timer_sleep() in devices/timer.c to avoid busy waiting
+* alarm clock implementation is not needed for later projects.
+
 A "latch" is a new synchronization primitive. Acquires block
 until the first release. Afterward, all ongoing and future
 acquires pass immediately.
+
 /* Latch. */
 struct latch
 {
@@ -102,29 +107,11 @@ resources that user processes tend to own.
 >> member, global or static variable, ‘typedef’, or enumeration.
 >> Identify the purpose of each in 25 words or less.
 
-A "latch" is a new synchronization primitive. Acquires block
-until the first release. Afterward, all ongoing and future
-acquires pass immediately.
-/* Latch. */
-struct latch
-{
-bool released;
-struct lock monitor_lock;
-struct condition rel_cond;
-};
-/* Released yet? */
-/* Monitor lock. */
-/* Signaled when released. */
-Added to struct thread:
-/* Members for implementing thread_join(). */
-struct latch ready_to_die;
-/* Release when thread about to die. */
-struct semaphore can_die;
-/* Up when thread allowed to die. */
-struct list children;
-/* List of child threads. */
-list_elem children_elem;
-/* Element of ‘children’ list. */
+#### functions
+* threads/thread.c
+* void thread_set_priority (int new_priority)
+* int thread_get_priority (void)
+* not used in later projects
 
 ### ---- ALGORITHMS ----
 >> Briefly describe your implementation of thread_join() and how it
@@ -179,29 +166,8 @@ resources that user processes tend to own.
 >> member, global or static variable, ‘typedef’, or enumeration.
 >> Identify the purpose of each in 25 words or less.
 
-A "latch" is a new synchronization primitive. Acquires block
-until the first release. Afterward, all ongoing and future
-acquires pass immediately.
-/* Latch. */
-struct latch
-{
-bool released;
-struct lock monitor_lock;
-struct condition rel_cond;
-};
-/* Released yet? */
-/* Monitor lock. */
-/* Signaled when released. */
-Added to struct thread:
-/* Members for implementing thread_join(). */
-struct latch ready_to_die;
-/* Release when thread about to die. */
-struct semaphore can_die;
-/* Up when thread allowed to die. */
-struct list children;
-/* List of child threads. */
-list_elem children_elem;
-/* Element of ‘children’ list. */
+#### Functions
+* not used in later projects
 
 ### ---- ALGORITHMS ----
 >> Briefly describe your implementation of thread_join() and how it
