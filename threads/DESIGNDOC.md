@@ -3,12 +3,13 @@
             |  Project 1: Threads  |
             |   DESIGN DOCUMENT    | 
             +----------------------+
----- GROUP ----
+## ---- GROUP ----
  * Amy Wu <jiaxuan@brandeis.edu>
  * Bonnie
  * Apurva
  * Andrew 
----- PRELIMINARIES ----
+
+## ---- PRELIMINARIES ----
 >> If you have any preliminary comments on your submission, notes for
 >> the TA, please give them here.
 
@@ -58,16 +59,12 @@ ready_to_die latch. When thread_exit() is called, the thread
 releases its ready_to_die latch, allowing the parent to continue.
 
 ### ---- SYNCHRONIZATION ----
->>
->>
->>
->>
->>
-Consider parent thread P with child thread C. How do you ensure
-proper synchronization and avoid race conditions when P calls wait(C)
-before C exits? After C exits? How do you ensure that all resources
-are freed in each case? How about when P terminates without waiting,
-before C exits? After C exits? Are there any special cases?
+>> Consider parent thread P with child thread C. How do you ensure
+>> proper synchronization and avoid race conditions when P calls wait(C)
+>> before C exits? After C exits? How do you ensure that all resources
+>> are freed in each case? How about when P terminates without waiting,
+>> before C exits? After C exits? Are there any special cases?
+
 C waits in thread_exit() for P to die before it finishes its own
 exit, using the can_die semaphore "down"ed by C and "up"ed by P as
 it exits. Regardless of whether whether C has terminated, there
@@ -83,6 +80,7 @@ can_die semaphore is initialized to 1.
 ### ---- RATIONALE ----
 >> Critique your design, pointing out advantages and disadadvantages in
 >> your design choices.
+
 This design has the advantage of simplicity. Encapsulating most
 of the synchronization logic into a new "latch" structure
 abstracts what little complexity there is into a separate layer,
