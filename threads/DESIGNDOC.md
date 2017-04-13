@@ -4,10 +4,10 @@
             |   DESIGN DOCUMENT    | 
             +----------------------+
 ---- GROUP ----
-Amy Wu <jiaxuan@brandeis.edu>
-Bonnie
-Apurva
-Andrew 
+ * Amy Wu <jiaxuan@brandeis.edu>
+ * Bonnie
+ * Apurva
+ * Andrew 
 ---- PRELIMINARIES ----
 >> If you have any preliminary comments on your submission, notes for
 >> the TA, please give them here.
@@ -79,7 +79,8 @@ freeing C’s resources is delayed until P’s death.)
 The initial thread is a special case because it has no parent to
 wait for it or to "up" its can_die semaphore. Therefore, its
 can_die semaphore is initialized to 1.
----- RATIONALE ----
+
+### ---- RATIONALE ----
 >> Critique your design, pointing out advantages and disadadvantages in
 >> your design choices.
 This design has the advantage of simplicity. Encapsulating most
