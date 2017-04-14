@@ -24,9 +24,10 @@ We used the provided Pintos solutions in order to understand Projects 1 and 2, s
                    Alarm Clock
                    ===========
 ### ---- DATA STRUCTURES ----
->> Copy here the declaration of each new or changed ‘struct’ or ‘struct’
->> member, global or static variable, ‘typedef’, or enumeration.
->> Identify the purpose of each in 25 words or less.
+>> A1: Copy here the declaration of each new or changed `struct' or
+>> `struct' member, global or static variable, `typedef', or
+>> enumeration.  Identify the purpose of each in 25 words or less.
+
 
 |File changed | devices/timer.c |
 | ------------- | ------------- |
@@ -83,19 +84,27 @@ timer_interrupt (struct intr_frame *args UNUSED)
 
 
 ### ---- ALGORITHMS ----
->> Briefly describe your implementation and how it
->> interacts with threading.
+>> A2: Briefly describe what happens in a call to timer_sleep(),
+>> including the effects of the timer interrupt handler.
 
-timer_sleep() avoids busy waiting by using semaphores.
+ * timer_sleep() avoids busy waiting by using semaphores.
+
+>> A3: What steps are taken to minimize the amount of time spent in
+>> the timer interrupt handler?
 
 ### ---- SYNCHRONIZATION ----
->> How do you ensure proper synchronization?
+>> A4: How are race conditions avoided when multiple threads call
+>> timer_sleep() simultaneously?
+
+>> A5: How are race conditions avoided when a timer interrupt occurs
+>> during a call to timer_sleep()?
+
 
 
 
 ### ---- RATIONALE ----
->> Critique your design, pointing out advantages and disadadvantages in
->> your design choices.
+>> A6: Why did you choose this design?  In what ways is it superior to
+>> another design you considered?
 
 
                    Priority Scheduling
