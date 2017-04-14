@@ -29,6 +29,7 @@ We used the provided Pintos solutions in order to understand Projects 1 and 2, s
 >> Identify the purpose of each in 25 words or less.
 
 |File changed | devices/timer.c |
+| ------------- | ------------- |
 |Function changed  | timer_sleep() reimplemented to avoid busy waiting. Compares threads based on wake up times and insert into a wait list.  |
 
 
@@ -105,6 +106,7 @@ timer_sleep() avoids busy waiting by using semaphores.
 >> Identify the purpose of each in 25 words or less.
 
 |File changed | threads/thread.c |
+| ------------- | ------------- |
 |Functions changed  | <ul><li>void thread_set_priority (int new_priority)</li><li>int thread_get_priority (void)</li></ul>   |
 
 
@@ -130,6 +132,7 @@ timer_sleep() avoids busy waiting by using semaphores.
 >> Identify the purpose of each in 25 words or less.
 
 |File changed | threads/thread.h |
+| ------------- | ------------- |
 
 
 ### ---- ALGORITHMS ----
