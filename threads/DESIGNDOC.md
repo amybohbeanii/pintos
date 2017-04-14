@@ -28,9 +28,10 @@ We used the provided Pintos solutions in order to understand Projects 1 and 2, s
 >> member, global or static variable, ‘typedef’, or enumeration.
 >> Identify the purpose of each in 25 words or less.
 
-##### functions
-#### file changed: devices/timer.c
-#### purpose: to reimplement timer_sleep() in devices/timer.c to avoid busy waiting. Compares threads based on wake up times and insert into a wait list.
+|Function/File changed | devices/timer.c |
+| ------------- | ------------- |
+| Purpose  | to reimplement timer_sleep() in devices/timer.c to avoid busy waiting. Compares threads based on wake up times and insert into a wait list.  |
+
 
 ```
 /*struct to store a list of waiting/sleeping threads*/
