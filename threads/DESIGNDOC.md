@@ -25,9 +25,55 @@ None.
 >> member, global or static variable, ‘typedef’, or enumeration.
 >> Identify the purpose of each in 25 words or less.
 
+##### files changed and purpose
+ * timer.c: to reimplement timer_sleep() in devices/timer.c to avoid busy waiting. Compares threads based on wake up times and insert into a wait list. 
 ##### functions
 * Reimplement timer_sleep() in devices/timer.c to avoid busy waiting
 * alarm clock implementation is not needed for later projects.
+
+/*struct to store a list of waiting/sleeping threads*/
+```
+static struct list wait_list;
+list_init(&wait_list);
+```
+/*function to compare two threads based on their wakeup times*/
+```
+static bool compare_threads_by_wakeup_time(const struct list_elem *a_,const struct list_elem *b_,void *aux UNUSED){
+	const struct thread *a = list_entry(a_,struct thread,timer_elem);
+	const struct thread *b = list_entry(b_,struct thread,timer_elem);
+	return a->wakeup_time<b->wakeup_time;
+}	
+```
+/*function to schedule wakeup time and add thread to waitlist*/
+```
+struct thread *t = thread_current();
+t->wakeup_time = timer_ticks()+ticks;
+ASSERT(intr_get_level() == INTR_ON);
+intr_disable();
+list_insert_ordered(&wait_list,&t->timer_elem,compare_threads_by_wakeup_time,NULL);
+intr_enable();
+sema_down(&t->timer_sema);
+```
+/*function to handle timer interrupts*/
+```
+static void
+timer_interrupt (struct intr_frame *args UNUSED)
+{
+  ticks++;
+  thread_tick ();
+  
+  /*new*/
+  while(!list_empty(&wait_list)){
+    struct thread *t = list_entry(list_front(&wait_list),struct thread,timer_elem);
+    if(ticks<t->wakeup_time)
+      break;
+    sema_up(&t->timer_sema);
+    thread_yield_to_higher_priority();
+    list_pop_front(&wait_list);
+  }
+}
+```
+ * next file
 ```
 /* Struct to store a sleeping thread along with its
    data indicating how much time it has left to sleep. */
