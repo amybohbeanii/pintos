@@ -29,7 +29,7 @@ None.
 ##### files changed and purpose
  * timer.c: to reimplement timer_sleep() in devices/timer.c to avoid busy waiting. Compares threads based on wake up times and insert into a wait list. 
 ##### functions
-####### timer.c
+#### timer.c
 
 ```
 /*struct to store a list of waiting/sleeping threads*/
@@ -77,7 +77,7 @@ timer_interrupt (struct intr_frame *args UNUSED)
 }
 ```
 
-####### next file
+#### next file
 ```
 /* Struct to store a sleeping thread along with its
    data indicating how much time it has left to sleep. */
@@ -147,30 +147,6 @@ timer_interrupt (struct intr_frame *args UNUSED)
 }
 ```
 
-A "latch" is a new synchronization primitive. Acquires block
-until the first release. Afterward, all ongoing and future
-acquires pass immediately.
-
-/* Latch. */
-struct latch
-{
-bool released;
-struct lock monitor_lock;
-struct condition rel_cond;
-};
-/* Released yet? */
-/* Monitor lock. */
-/* Signaled when released. */
-Added to struct thread:
-/* Members for implementing thread_join(). */
-struct latch ready_to_die;
-/* Release when thread about to die. */
-struct semaphore can_die;
-/* Up when thread allowed to die. */
-struct list children;
-/* List of child threads. */
-list_elem children_elem;
-/* Element of ‘children’ list. */
 
 ### ---- ALGORITHMS ----
 >> Briefly describe your implementation of thread_join() and how it
