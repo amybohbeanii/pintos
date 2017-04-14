@@ -5,19 +5,19 @@
             +----------------------+
 ## ---- GROUP ----
  * Amy Wu <jiaxuan@brandeis.edu>
- * Bonnie
- * Apurva
- * Andrew 
+ * Bonnie Ishiguro <Bonnie.Ishiguro@students.olin.edu>
+ * Apurva Raman <Apurva.Raman@students.olin.edu>
+ * Andrew Pan <Andrew.Pan@students.olin.edu>
 
 ## ---- PRELIMINARIES ----
 >> If you have any preliminary comments on your submission, notes for
 >> the TA, please give them here.
-Alarm clock implementation is not needed for VM project. However, we want to understand how threading works. 
+Alarm clock implementation is not needed for VM project. However, we want to understand how threading works. We read chapter 9 in TOS in order to understand how threading works.
 
 >> Please cite any offline or online sources you consulted while
 >> preparing your submission, other than the Pintos documentation,
 >> course text, and lecture notes.
-None.
+We used the provided Pintos solutions in order to understand Projects 1 and 2, so we can implement our own solution to Project 3: Virtual Memory quicker. 
 
                    Alarm Clock
                    ===========
@@ -26,10 +26,9 @@ None.
 >> member, global or static variable, ‘typedef’, or enumeration.
 >> Identify the purpose of each in 25 words or less.
 
-##### files changed and purpose
- * timer.c: to reimplement timer_sleep() in devices/timer.c to avoid busy waiting. Compares threads based on wake up times and insert into a wait list. 
 ##### functions
-#### timer.c
+#### file changed: devices/timer.c
+#### purpose: to reimplement timer_sleep() in devices/timer.c to avoid busy waiting. Compares threads based on wake up times and insert into a wait list.
 
 ```
 /*struct to store a list of waiting/sleeping threads*/
@@ -151,13 +150,10 @@ timer_interrupt (struct intr_frame *args UNUSED)
 
 
 ### ---- ALGORITHMS ----
->> Briefly describe your implementation of thread_join() and how it
->> interacts with thread termination.
+>> Briefly describe your implementation and how it
+>> interacts with threading.
 
-thread_join() finds the joined child on the thread’s list of
-children and waits for the child to exit by acquiring the child’s
-ready_to_die latch. When thread_exit() is called, the thread
-releases its ready_to_die latch, allowing the parent to continue.
+timer_sleep() avoids busy waiting by using semaphores.
 
 ### ---- SYNCHRONIZATION ----
 >> Consider parent thread P with child thread C. How do you ensure
