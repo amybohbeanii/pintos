@@ -12,11 +12,13 @@
 ## ---- PRELIMINARIES ----
 >> If you have any preliminary comments on your submission, notes for
 >> the TA, please give them here.
+
 Alarm clock implementation is not needed for VM project. However, we want to understand how threading works. We read chapter 9 in TOS in order to understand how threading works.
 
 >> Please cite any offline or online sources you consulted while
 >> preparing your submission, other than the Pintos documentation,
 >> course text, and lecture notes.
+
 We used the provided Pintos solutions in order to understand Projects 1 and 2, so we can implement our own solution to Project 3: Virtual Memory quicker. 
 
                    Alarm Clock
