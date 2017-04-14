@@ -48,13 +48,15 @@ static bool compare_threads_by_wakeup_time(const struct list_elem *a_,const stru
 
 ```
 /*function to schedule wakeup time and add thread to waitlist*/
-struct thread *t = thread_current();
-t->wakeup_time = timer_ticks()+ticks;
-ASSERT(intr_get_level() == INTR_ON);
-intr_disable();
-list_insert_ordered(&wait_list,&t->timer_elem,compare_threads_by_wakeup_time,NULL);
-intr_enable();
-sema_down(&t->timer_sema);
+void timer_sleep(int64_t ticks){
+	struct thread *t = thread_current();
+	t->wakeup_time = timer_ticks()+ticks;
+	ASSERT(intr_get_level() == INTR_ON);
+	intr_disable();
+	list_insert_ordered(&wait_list,&t->timer_elem,compare_threads_by_wakeup_time,NULL);
+	intr_enable();
+	sema_down(&t->timer_sema);
+}	
 ```
 
 ```
