@@ -107,7 +107,7 @@ timer_sleep() avoids busy waiting by using semaphores.
 
 |File changed | threads/thread.c |
 | ------------- | ------------- |
-|Functions changed  | <ul><li>void thread_set_priority (int new_priority)</li><li>int thread_get_priority (void)</li></ul>   |
+|Functions changed  | <ul><li>static void adjust_recent_cpu(struct thread*t, void *aux)</li><li>void thread_tick(void)</li><li>void thread_set_priority (int priority)</li><li>bool thread_lower_priority(const struct list_elem *a_,const struct list_elem *b_, void *aux UNUSED)</li><li>static void recompute_priority_chain(void)</li><li>void thread_set_priority (int priority)</li><li>void thread_set_nice</li><li>int thread_get_nice(void)</li><li>int thread_get_load_avg(void)</li><li>int thread_get_recent_cpu(void)</li><li>int thread_set_nice</li><li>static struct thread * next_thread_to_run(void)</li></ul>   |
 
 
 ### ---- ALGORITHMS ----
