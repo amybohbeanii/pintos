@@ -13,13 +13,13 @@
 >> If you have any preliminary comments on your submission, notes for
 >> the TA, please give them here.
 
-Alarm clock implementation is not needed for VM project. However, we want to understand how threading works. We read chapter 9 in TOS in order to understand how threading works.
+Alarm clock implementation is not needed for VM project. However, it can be useful for our VM implementation. Priority Scheduling is not needed for future projects. Advanced Scheduler is not used for future projects. 
 
 >> Please cite any offline or online sources you consulted while
 >> preparing your submission, other than the Pintos documentation,
 >> course text, and lecture notes.
 
-We used the provided Pintos solutions in order to understand Projects 1 and 2, so we can implement our own solution to Project 3: Virtual Memory quicker. 
+We used the provided Pintos solutions in order to understand Projects 1 and 2, so we can implement our own solution to Project 3: Virtual Memory quicker. One of our learning goals is to understand how threading works and we read chapter 9 in TOS in order to understand that.
 
                    Alarm Clock
                    ===========
@@ -28,9 +28,8 @@ We used the provided Pintos solutions in order to understand Projects 1 and 2, s
 >> member, global or static variable, ‘typedef’, or enumeration.
 >> Identify the purpose of each in 25 words or less.
 
-|Function/File changed | devices/timer.c |
-| ------------- | ------------- |
-| Purpose  | to reimplement timer_sleep() in devices/timer.c to avoid busy waiting. Compares threads based on wake up times and insert into a wait list.  |
+|File changed | devices/timer.c |
+|Function changed  | timer_sleep() reimplemented to avoid busy waiting. Compares threads based on wake up times and insert into a wait list.  |
 
 
 ```
@@ -81,76 +80,6 @@ timer_interrupt (struct intr_frame *args UNUSED)
 }
 ```
 
-#### next file
-```
-/* Struct to store a sleeping thread along with its
-   data indicating how much time it has left to sleep. */
-typedef struct thread_sleeping {
-  int64_t time_slept;
-  int64_t total_time;
-  struct thread *thread_ptr;
-  struct list_elem elem;
-} thread_sleeping, *thread_sleeping_ptr;
-```
-```
-/* List of threads that are currently sleeping */
-static thread_sleeping sleeping_threads;
-```
-```
-/* Sleeps for approximately TICKS timer ticks.  Interrupts must
-   be turned on. */
-void
-timer_sleep (int64_t ticks) 
-{
-  int64_t start = timer_ticks ();
-	
-  struct list *sleeping_list = get_sleeping_list();
-  intr_set_level(INTR_ON);
-  ASSERT (intr_get_level () == INTR_ON);
-  
-  struct thread *cur = thread_current();
-
-  cur->sleep_start = start;
-  cur->sleep_total = ticks;
-  list_push_back (sleeping_list, &cur->sleeping_elem);
-  intr_set_level(INTR_OFF);
-  thread_block();
-  intr_set_level(INTR_ON);
-}
-```
-```
-static void update_sleeping_threads(void)
-{
-  struct list_elem *e;
-  struct list *sleeping_list = get_sleeping_list();
-  
-  for (e = list_begin (sleeping_list); e != list_end (sleeping_list);
-       e = list_next (e))
-    {
-       struct thread *t = list_entry (e, struct thread, sleeping_elem);
-       
-       if(timer_elapsed(t->sleep_start) >= t->sleep_total)
-	   {
-	     thread_unblock(t);
-	     list_remove(e);
-	   }
-    }
-}
-
-/* Timer interrupt handler. */
-static void
-timer_interrupt (struct intr_frame *args UNUSED)
-{
-  ticks++;
-  
-  // Update all sleeping threads
-  update_sleeping_threads();
-  
-  thread_tick ();
-  
-}
-```
-
 
 ### ---- ALGORITHMS ----
 >> Briefly describe your implementation and how it
@@ -159,41 +88,14 @@ timer_interrupt (struct intr_frame *args UNUSED)
 timer_sleep() avoids busy waiting by using semaphores.
 
 ### ---- SYNCHRONIZATION ----
->> Consider parent thread P with child thread C. How do you ensure
->> proper synchronization and avoid race conditions when P calls wait(C)
->> before C exits? After C exits? How do you ensure that all resources
->> are freed in each case? How about when P terminates without waiting,
->> before C exits? After C exits? Are there any special cases?
+>> How do you ensure proper synchronization?
 
-C waits in thread_exit() for P to die before it finishes its own
-exit, using the can_die semaphore "down"ed by C and "up"ed by P as
-it exits. Regardless of whether whether C has terminated, there
-is no race on wait(C), because C waits for P’s permission before
-it frees itself.
-Regardless of whether P waits for C, P still "up"s C’s can_die
-semaphore when P dies, so C will always be freed. (However,
-freeing C’s resources is delayed until P’s death.)
-The initial thread is a special case because it has no parent to
-wait for it or to "up" its can_die semaphore. Therefore, its
-can_die semaphore is initialized to 1.
+
 
 ### ---- RATIONALE ----
 >> Critique your design, pointing out advantages and disadadvantages in
 >> your design choices.
 
-This design has the advantage of simplicity. Encapsulating most
-of the synchronization logic into a new "latch" structure
-abstracts what little complexity there is into a separate layer,
-making the design easier to reason about. Also, all the new data
-members are in ‘struct thread’, with no need for any extra dynamic
-allocation, etc., that would require extra management code.
-On the other hand, this design is wasteful in that a child thread
-cannot free itself before its parent has terminated. A parent
-thread that creates a large number of short-lived child threads
-could unnecessarily exhaust kernel memory. This is probably
-acceptable for implementing kernel threads, but it may be a bad
-idea for use with user processes because of the larger number of
-resources that user processes tend to own.
 
                    Priority Scheduling
                    ===================
@@ -202,57 +104,23 @@ resources that user processes tend to own.
 >> member, global or static variable, ‘typedef’, or enumeration.
 >> Identify the purpose of each in 25 words or less.
 
-#### functions
-* threads/thread.c
-* void thread_set_priority (int new_priority)
-* int thread_get_priority (void)
-* not used in later projects
+|File changed | threads/thread.c |
+|Functions changed  | <ul><li>void thread_set_priority (int new_priority)</li><li>int thread_get_priority (void)</li></ul>   |
+
 
 ### ---- ALGORITHMS ----
->> Briefly describe your implementation of thread_join() and how it
->> interacts with thread termination.
+>> Briefly describe your implementation and how it
+>> interacts with threading.
 
-thread_join() finds the joined child on the thread’s list of
-children and waits for the child to exit by acquiring the child’s
-ready_to_die latch. When thread_exit() is called, the thread
-releases its ready_to_die latch, allowing the parent to continue.
 
 ### ---- SYNCHRONIZATION ----
->> Consider parent thread P with child thread C. How do you ensure
->> proper synchronization and avoid race conditions when P calls wait(C)
->> before C exits? After C exits? How do you ensure that all resources
->> are freed in each case? How about when P terminates without waiting,
->> before C exits? After C exits? Are there any special cases?
+>> How do you ensure proper synchronization?
 
-C waits in thread_exit() for P to die before it finishes its own
-exit, using the can_die semaphore "down"ed by C and "up"ed by P as
-it exits. Regardless of whether whether C has terminated, there
-is no race on wait(C), because C waits for P’s permission before
-it frees itself.
-Regardless of whether P waits for C, P still "up"s C’s can_die
-semaphore when P dies, so C will always be freed. (However,
-freeing C’s resources is delayed until P’s death.)
-The initial thread is a special case because it has no parent to
-wait for it or to "up" its can_die semaphore. Therefore, its
-can_die semaphore is initialized to 1.
+
 
 ### ---- RATIONALE ----
 >> Critique your design, pointing out advantages and disadadvantages in
 >> your design choices.
-
-This design has the advantage of simplicity. Encapsulating most
-of the synchronization logic into a new "latch" structure
-abstracts what little complexity there is into a separate layer,
-making the design easier to reason about. Also, all the new data
-members are in ‘struct thread’, with no need for any extra dynamic
-allocation, etc., that would require extra management code.
-On the other hand, this design is wasteful in that a child thread
-cannot free itself before its parent has terminated. A parent
-thread that creates a large number of short-lived child threads
-could unnecessarily exhaust kernel memory. This is probably
-acceptable for implementing kernel threads, but it may be a bad
-idea for use with user processes because of the larger number of
-resources that user processes tend to own.
 
                         Advanced Scheduler
                         ==================
@@ -261,53 +129,20 @@ resources that user processes tend to own.
 >> member, global or static variable, ‘typedef’, or enumeration.
 >> Identify the purpose of each in 25 words or less.
 
-#### Functions
-* not used in later projects
+|File changed | threads/thread.h |
+
 
 ### ---- ALGORITHMS ----
->> Briefly describe your implementation of thread_join() and how it
->> interacts with thread termination.
+>> Briefly describe your implementation and how it
+>> interacts with threading.
 
-thread_join() finds the joined child on the thread’s list of
-children and waits for the child to exit by acquiring the child’s
-ready_to_die latch. When thread_exit() is called, the thread
-releases its ready_to_die latch, allowing the parent to continue.
 
 ### ---- SYNCHRONIZATION ----
->> Consider parent thread P with child thread C. How do you ensure
->> proper synchronization and avoid race conditions when P calls wait(C)
->> before C exits? After C exits? How do you ensure that all resources
->> are freed in each case? How about when P terminates without waiting,
->> before C exits? After C exits? Are there any special cases?
+>> How do you ensure proper synchronization?
 
-C waits in thread_exit() for P to die before it finishes its own
-exit, using the can_die semaphore "down"ed by C and "up"ed by P as
-it exits. Regardless of whether whether C has terminated, there
-is no race on wait(C), because C waits for P’s permission before
-it frees itself.
-Regardless of whether P waits for C, P still "up"s C’s can_die
-semaphore when P dies, so C will always be freed. (However,
-freeing C’s resources is delayed until P’s death.)
-The initial thread is a special case because it has no parent to
-wait for it or to "up" its can_die semaphore. Therefore, its
-can_die semaphore is initialized to 1.
+
 
 ### ---- RATIONALE ----
 >> Critique your design, pointing out advantages and disadadvantages in
 >> your design choices.
-
-This design has the advantage of simplicity. Encapsulating most
-of the synchronization logic into a new "latch" structure
-abstracts what little complexity there is into a separate layer,
-making the design easier to reason about. Also, all the new data
-members are in ‘struct thread’, with no need for any extra dynamic
-allocation, etc., that would require extra management code.
-On the other hand, this design is wasteful in that a child thread
-cannot free itself before its parent has terminated. A parent
-thread that creates a large number of short-lived child threads
-could unnecessarily exhaust kernel memory. This is probably
-acceptable for implementing kernel threads, but it may be a bad
-idea for use with user processes because of the larger number of
-resources that user processes tend to own.
-
 
