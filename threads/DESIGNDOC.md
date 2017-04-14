@@ -12,6 +12,7 @@
 ## ---- PRELIMINARIES ----
 >> If you have any preliminary comments on your submission, notes for
 >> the TA, please give them here.
+Alarm clock implementation is not needed for VM project. However, we want to understand how threading works. 
 
 >> Please cite any offline or online sources you consulted while
 >> preparing your submission, other than the Pintos documentation,
@@ -28,24 +29,25 @@ None.
 ##### files changed and purpose
  * timer.c: to reimplement timer_sleep() in devices/timer.c to avoid busy waiting. Compares threads based on wake up times and insert into a wait list. 
 ##### functions
-* Reimplement timer_sleep() in devices/timer.c to avoid busy waiting
-* alarm clock implementation is not needed for later projects.
+####### timer.c
 
-/*struct to store a list of waiting/sleeping threads*/
 ```
+/*struct to store a list of waiting/sleeping threads*/
 static struct list wait_list;
 list_init(&wait_list);
 ```
-/*function to compare two threads based on their wakeup times*/
+
 ```
+/*function to compare two threads based on their wakeup times*/
 static bool compare_threads_by_wakeup_time(const struct list_elem *a_,const struct list_elem *b_,void *aux UNUSED){
 	const struct thread *a = list_entry(a_,struct thread,timer_elem);
 	const struct thread *b = list_entry(b_,struct thread,timer_elem);
 	return a->wakeup_time<b->wakeup_time;
 }	
 ```
-/*function to schedule wakeup time and add thread to waitlist*/
+
 ```
+/*function to schedule wakeup time and add thread to waitlist*/
 struct thread *t = thread_current();
 t->wakeup_time = timer_ticks()+ticks;
 ASSERT(intr_get_level() == INTR_ON);
@@ -54,8 +56,9 @@ list_insert_ordered(&wait_list,&t->timer_elem,compare_threads_by_wakeup_time,NUL
 intr_enable();
 sema_down(&t->timer_sema);
 ```
-/*function to handle timer interrupts*/
+
 ```
+/*function to handle timer interrupts*/
 static void
 timer_interrupt (struct intr_frame *args UNUSED)
 {
@@ -73,7 +76,8 @@ timer_interrupt (struct intr_frame *args UNUSED)
   }
 }
 ```
- * next file
+
+####### next file
 ```
 /* Struct to store a sleeping thread along with its
    data indicating how much time it has left to sleep. */
